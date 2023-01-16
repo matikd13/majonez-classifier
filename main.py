@@ -16,31 +16,36 @@ tf.config.list_physical_devices('GPU')
 
 data_dir = 'data'
 image_exts = ['jpeg','jpg', 'bmp', 'png']
-for image_class in os.listdir(data_dir):
-    for image in os.listdir(os.path.join(data_dir, image_class)):
-        image_path = os.path.join(data_dir, image_class, image)
-        try:
-            img = cv2.imread(image_path)
-            tip = imghdr.what(image_path)
-            if tip not in image_exts:
-                print('Image not in ext list {}'.format(image_path))
-                os.remove(image_path)
-        except Exception as e:
-            print('Issue with image {}'.format(image_path))
-            # os.remove(image_path)
+
+# for image_class in os.listdir(data_dir):
+#     for image in os.listdir(os.path.join(data_dir, image_class)):
+#         image_path = os.path.join(data_dir, image_class, image)
+#         try:
+#             img = cv2.imread(image_path)
+#             tip = imghdr.what(image_path)
+#             if tip not in image_exts:
+#                 print('Image not in ext list {}'.format(image_path))
+#                 os.remove(image_path)
+#         except Exception as e:
+#             print('Issue with image {}'.format(image_path))
+#             # os.remove(image_path)
 
 
 data = tf.keras.utils.image_dataset_from_directory(data_dir) #0 kielecki, 1 winiary
 data = data.map(lambda x,y: (x/255, y))
 
 train_size = int(len(data)*.7)
-val_size = int(len(data)*.2)+1
-test_size = int(len(data)*.1)
+val_size = int(len(data)*.2)
+test_size = int(len(data)*.1)+1
 
-while train_size+val_size+test_size != len(data):
-    val_size += 1
-    if train_size+val_size+test_size != len(data):
-        test_size +=1
+print(len(data))
+
+# while train_size+val_size+test_size != len(data):
+#     val_size += 1
+#     if train_size+val_size+test_size != len(data):
+#         test_size +=1
+
+print(train_size, val_size,test_size)
 
 train = data.take(train_size)
 val = data.skip(train_size).take(val_size)
